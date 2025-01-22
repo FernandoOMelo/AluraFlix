@@ -1,0 +1,11 @@
+{
+  "name": "aluraflix",
+  "version": "1.0.0",
+  "description": "API Rest desenvolvida na Alura Challange BackEnd Semana 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
