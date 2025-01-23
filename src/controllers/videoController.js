@@ -36,25 +36,42 @@ class VideoController {
     static async createVideo(req, res){
         const sql = 'INSERT INTO VIDEOS (TITULO, DESCRICAO, URL) VALUES (?, ?, ?)';
         const params = [req.body.titulo, req.body.descricao, req.body.url];
-        db.run(sql, params, (err) => {
-            if (err){
-                res.status(400).json({ok: false, error: err.message});
-            } else {
-                res.status(200).json({ok: true, message: `O Vídeo ${this} foi cadastrado com sucesso!`});
-            };
-        });
+        
+        if (!req.body.titulo || !req.body.descricao || !req.body.url){
+            res.status(400).json({ ok: false, error: 'Os campos: (TITULO, DESCRICAO, URL) são de preenchimento obrigatório para o cadastro de um novo livro.'});
+            return;
+        } else{ 
+            db.run(sql, params, function(err) {
+                if (err){
+                    res.status(400).json({ok: false, error: err.message});
+                } else {
+                    db.get(`SELECT * FROM VIDEOS WHERE ID = ${this.lastID}`, function (err, row){
+                        if (err){
+                            throw err.message;
+                        } else {
+                            res.status(200).json({ok: true, message: 'Video cadastrado com sucesso!', data: row});
+                        };
+                    });
+                };
+            });
+        };
     };
 
     static async updateVideo(req, res) {
         const sql = 'UPDATE VIDEOS SET TITULO = ?, DESCRICAO = ?, URL = ? WHERE ID = ?';
         const params = [req.body.titulo, req.body.descricao, req.body.url, req.params.id];
-        db.run(sql, params, (err) => {
-            if (err){
-                res.status(400).json({ ok: false, error: err.message});
-            } else {
-                res.status(200).json({ ok: true, message: 'Vídeo foi atualizado com sucesso,'});
-            };
-        });
+        if (!req.body.titulo || !req.body.descricao || !req.body.url){
+            res.status(400).json({ ok: false, error: 'Os campos: (TITULO, DESCRICAO, URL) são de preenchimento obrigatório para a atualização de um novo livro.'});
+            return;
+        } else{ 
+            db.run(sql, params, function(err){
+                if (err){
+                    res.status(400).json({ ok: false, error: err.message});
+                } else {
+                    res.status(200).json({ ok: true, message: 'Vídeo foi atualizado com sucesso.', data: this.changes});
+                };
+            });
+        };
     };
 
     static async deleteVideo(req, res) {
